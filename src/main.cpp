@@ -1,8 +1,10 @@
 #include <iostream>
 
+#include "Terminal.h"
+
 int main(int argc, char* argv[])
 {
-    std::cout << "Hello worls" << std::endl;
+    LOG("HELLO WORLD");
 
     return 0;
 }
