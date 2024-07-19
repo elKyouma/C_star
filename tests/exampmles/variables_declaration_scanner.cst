@@ -1,0 +1,16 @@
+x : u8 = 16;
+x : u16 = 16;
+x : u32 = 16;
+x : u64 = 16;
+x : s8 = 16;
+x : s16 = 16;
+x : s32 = 16;
+x : s64 = 16;
+x : float = 16.32;
+x : double = 16.21;
+x : string = "fsdfefs";
+x : char = 's;
+x := 16;
+x := 2.4;
+x := "str";
+x := 'a;

@@ -1,0 +1,10 @@
+();
+{};
+[];
+if(x > y);
+else if(x < y);
+else if(x >= y);
+else if(x == y);
+else if(x <= y);
+else if(x != y);
+else if(!x and x == y or !y);
