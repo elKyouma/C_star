@@ -15,7 +15,4 @@ private:
     //colors
 };
 
-//using namespace std::literals;
-//#define LOG(x) Terminal::Print(__FILE__, __LINE__, "[Internal] "s + x, LogLevel::INFO)
-//#define WRN(x) Terminal::Print(__FILE__, __LINE__, "[Internal] "s + x, LogLevel::WARNING)
-//#define ERR(x) Terminal::Print(__FILE__, __LINE__, "[Internal] "s + x, LogLevel::ERROR)
+#define ASSERT(x, y) if(!(x)) {fmt::print(y); throw;}

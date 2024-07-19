@@ -4,26 +4,22 @@
 #include <fmt/color.h>
 #include <fmt/ostream.h>
 #include <filesystem>
+#include <stdexcept>
 #include <string_view>
 #include <fstream>
-
+#include "Terminal.h"
 using namespace std::string_literals;
 namespace fs = std::filesystem;
 
 int main(int argc, char* argv[])
 {
-    if(argc < 2)
-    {
-        fmt::print("You didnt specify any file");
-        return 1;
-    }
+    ASSERT(argc >= 2, "You didnt specify any file\n");
+
     fs::path existingFilePath = argv[1];
     std::string filename = argv[1];
-    if(!std::filesystem::exists(filename))
-    {
-        fmt::print("The file you specified doesn't exist");
-        return 1;
-    }
+
+    ASSERT(std::filesystem::exists(filename), "The file you specified doesn't exist\n")
+    ASSERT(existingFilePath == ".cst", "The file has wrong extension\n")
 
     std::string intermediateFileName = std::string(existingFilePath.relative_path()) + std::string(existingFilePath.stem()) + ".cstt";
 
