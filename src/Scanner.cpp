@@ -7,6 +7,7 @@
 #include <fstream>
 #include <string>
 using namespace std::literals;
+using enum TokenType;
 
 std::unordered_map<std::string, TokenType> keyWords ={
     {"u8", U8},

@@ -1,4 +1,9 @@
 #include <string>
+#include <fmt/core.h>
+#include <fmt/color.h>
+#include <fmt/ostream.h>
+
+using namespace std::string_literals;
 
 enum LogLevel
 {
@@ -15,4 +20,5 @@ private:
     //colors
 };
 
-#define ASSERT(x, y) if(!(x)) {fmt::print(y); throw;}
+#define THROW(x) {fmt::print(x); throw;}
+#define ASSERT(x, y) if(!(x)) THROW(y)
