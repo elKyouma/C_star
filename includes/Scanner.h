@@ -28,6 +28,8 @@ enum class TokenType
 	PRINT, RETURN, WHILE, FOR
 };
 
+std::string AnyPrint(const std::any &value);
+
 static std::unordered_map<TokenType, std::string> tokenTypeToString = {
     {TokenType::LEFT_PAREN, "LEFT_PAREN"},
     {TokenType::RIGHT_PAREN, "RIGHT_PAREN"},

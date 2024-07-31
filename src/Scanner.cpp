@@ -37,6 +37,26 @@ std::unordered_map<std::string, TokenType> keyWords ={
     {"print", PRINT}
 };
 
+std::string AnyPrint(const std::any &value)
+{
+    if (auto x = std::any_cast<int>(&value)) {
+        return std::to_string(*x);
+    }
+    if (auto x = std::any_cast<float>(&value)) {
+        return std::to_string(*x);
+    }
+    if (auto x = std::any_cast<double>(&value)) {
+        return std::to_string(*x);
+    }
+    if (auto x = std::any_cast<std::string>(&value)) {
+        return *x;
+    }
+    if (auto x = std::any_cast<const char*>(&value)) {
+        return *x;
+    }
+    return "invalidType";
+}
+
 std::vector<Token> ScanFile(const std::string& filename)
 {
     std::ifstream file(filename, std::ifstream::in);

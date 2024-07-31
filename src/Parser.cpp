@@ -6,16 +6,16 @@
 #include "Terminal.h"
 
 
-BinaryExpr::BinaryExpr(Expression& left, Expression& right, TokenType type) :
+BinaryExpr::BinaryExpr(Expression* left, Expression* right, TokenType type) :
 	left(left), right(right), type(type)
 {}
-UnaryExpr::UnaryExpr(Expression& right, TokenType type) :
+UnaryExpr::UnaryExpr(Expression* right, TokenType type) :
 	right(right), type(type)
 {}
 
 std::vector<Expression*> Parser::parse(std::vector<Token> tokens)
 {
-	tokens = tokens;
+	this->tokens = tokens;
 	currId = 0;
 	std::vector<Expression*> exprs{};
 	switch(CurrentToken().type)
@@ -26,6 +26,9 @@ std::vector<Expression*> Parser::parse(std::vector<Token> tokens)
 	case TokenType::IF: /*TODO implement*/ break;
 	case TokenType::ELSE: /*TODO implement*/ break;
 	case TokenType::DSLASH: /*TODO implement*/ break;
+	case TokenType::INT:
+	case TokenType::REAL:
+	case TokenType::TEXT:
 	case TokenType::IDENTIFIER: exprs.push_back(checkForEquality()); break;
 
 	case TokenType::SEMI: currId++;
@@ -54,7 +57,7 @@ Token& Parser::PrevToken()
 bool Parser::match(std::initializer_list<TokenType> types)
 {
 	for(const TokenType& type : types)
-		if(NextToken().type == type)
+		if(CurrentToken().type == type)
 		{
 			currId ++;
 			return true;
@@ -69,11 +72,12 @@ Expression* Parser::checkForEquality()
 	if(match({TokenType::EQUAL, TokenType::HAT_EQUAL, TokenType::STAR_EQUAL,
 				TokenType::SLASH_EQUAL, TokenType::PLUS_EQUAL, TokenType::MINUS_EQUAL}))
 	{
+		auto op = PrevToken().type;
 		Expression* right = checkForComparison();
-		return new BinaryExpr(*left, *right, PrevToken().type);
+		return new BinaryExpr(left, right, op);
 	}
 
-	return std::move(left);
+	return left;
 }
 
 Expression* Parser::checkForComparison()
@@ -83,11 +87,12 @@ Expression* Parser::checkForComparison()
 	if(match({TokenType::NOT_EQUAL, TokenType::LESS_EQUAL, TokenType::GREATER_EQUAL,
 				TokenType::GREATER, TokenType::LESS, TokenType::DEQUAL }))
 	{
-		Expression* right = checkForTerm();
-		return new BinaryExpr(*left, *right, PrevToken().type);
+		auto op = PrevToken().type;
+		Expression* right = checkForComparison();
+		return new BinaryExpr(left, right, op);
 	}
 
-	return std::move(left);
+	return left;
 }
 
 Expression* Parser::checkForTerm()
@@ -96,11 +101,12 @@ Expression* Parser::checkForTerm()
 
 	if(match({TokenType::PLUS, TokenType::MINUS}))
 	{
-		Expression* right = checkForFactor();
-		return new BinaryExpr(*left, *right, PrevToken().type);
+		auto op = PrevToken().type;
+		Expression* right = checkForTerm();
+		return new BinaryExpr(left, right, op);
 	}
 
-	return std::move(left);
+	return left;
 }
 
 Expression* Parser::checkForFactor()
@@ -109,28 +115,44 @@ Expression* Parser::checkForFactor()
 
 	if(match({TokenType::STAR, TokenType::SLASH}))
 	{
-		Expression* right = checkForUnary();
-		return new BinaryExpr(*left, *right, PrevToken().type);
+		auto op = PrevToken().type;
+		Expression* right = checkForFactor();
+		return new BinaryExpr(left, right, op);
 	}
 
-	return std::move(left);
+	return left;
 }
 
 Expression* Parser::checkForUnary()
 {
 	if(match({TokenType::MINUS, TokenType::NOT}))
 	{
-		Expression* left = checkForUnary();
-		return new UnaryExpr(*left, PrevToken().type);
+		auto op = PrevToken().type;
+		Expression* right = checkForUnary();
+		return new UnaryExpr(right, op);
 	}
 
-	return checkForPrimary();
+	return checkForPower();
+}
+#include <iostream>
+Expression* Parser::checkForPower()
+{
+	Expression* left = checkForPrimary();
+	if(match({TokenType::HAT}))
+	{
+		std::cout << "HAT" << std::endl;
+		auto op = PrevToken().type;
+		Expression* right = checkForPower();
+		return new BinaryExpr(left, right, op);
+	}
+
+	return left;
 }
 
 Expression* Parser::checkForPrimary()
 {
-	currId++;
 	auto token = CurrentToken();
+	currId++;
 	switch(token.type)
 	{
 	case TokenType::TEXT:
